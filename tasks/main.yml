@@ -1,5 +1,14 @@
 ---
 # tasks file for ansible-cis-docker-benchmark
 
-- name: CIS Docker Community Edition Benchmark Section 1
+- name: "Section 1: Host Configuration"
   include_tasks: section1.yml
+  when: cdb_section1
+
+- name: "Section 2: Docker Daemon Configuration"
+  include_tasks: section2.yml
+  when: cdb_section2
+
+- name: "Section 3: Docker Daemon Configuration Files"
+  include_tasks: section3.yml
+  when: cdb_section3
