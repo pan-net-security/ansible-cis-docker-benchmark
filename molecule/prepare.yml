@@ -4,7 +4,7 @@
   gather_facts: false
   become: true
   tasks:
-    - name: install packages for testing under docker
+    - name: "Install packages for testing under docker"
       apt:
         name:
           - apt-transport-https
@@ -13,13 +13,13 @@
           - software-properties-common
         state: present
 
-    - name: Add an Apt signing key, will not download if present
+    - name: "Add an Apt signing key, will not download if present"
       apt_key:
         id: 0EBFCD88
         url: https://download.docker.com/linux/ubuntu/gpg
         state: present
 
-    - name: apt repo
+    - name: "Add Docker APT repository"
       apt_repository:
         repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
         state: present
@@ -33,7 +33,7 @@
         state: present
         update_cache: yes
 
-    - name: restart docker
+    - name: "Restart docker"
       service:
         name: docker
         state: restarted

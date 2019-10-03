@@ -7,12 +7,17 @@ driver:
   name: docker
 lint:
   name: yamllint
-  enabled: false
+  enabled: true
 platforms:
   - name: Ubuntu
     image: solita/ubuntu-systemd:18.04
     privileged: true
     command: /sbin/init
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    tmpfs:
+      - /tmp
+      - /run
 provisioner:
   name: ansible
   lint:

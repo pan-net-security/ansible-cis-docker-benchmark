@@ -17,14 +17,14 @@ provisioner:
   name: ansible
   lint:
     name: ansible-lint
-    enabled: false
+    enabled: true
   playbooks:
     prepare: ../prepare.yml
     converge: ../playbook.yml
 
 lint:
   name: yamllint
-  enabled: false
+  enabled: true
 verifier:
   name: testinfra
   directory: ../tests/

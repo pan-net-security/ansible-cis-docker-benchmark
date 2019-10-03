@@ -13,8 +13,9 @@ cdb_section_5: true
 
 # section_6: false
 
-cdb_tursted_users:
-  - vagrant
+cdb_trusted_users:
+  - ubuntu
+  - root
 
 cdb_config_file: /etc/docker/daemon.json
 
@@ -49,3 +50,7 @@ cdb_default_ulimits_nproc_hard: 2048
 cdb_syslog_address: ''
 cdb_seccomp_profile: ''
 cdb_authorization_plugins: []
+
+
+# --- internal vars
+_cdb_unscored_print: "Unscored items are not covered by this role"

@@ -36,13 +36,21 @@ Development
 -----------
 
 ```
-virtualenv -p python3 venv
-. venv/bin/activate
-pip install molecule[docker] molecule[vagrant] docker python-vagrant
-molecule test 
-# or
+virtualenv -p python3 .venv
+. .venv/bin/activate
+pip install molecule[docker] molecule[vagrant] python-vagrant docker
+molecule test
+# or [currently broken]
 molecule test -s docker-ubuntu
 ````
+
+TODO
+-----
+
+The following requirements are not checked, because:
+
+* Docker Registry is not being checked: 3.7, 3.8
+
 
 License
 -------

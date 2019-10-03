@@ -1,2 +1,12 @@
 ---
 # handlers file for ansible-cis-docker-benchmark
+
+- name: Reload auditd Rules
+  service:
+    name: auditd
+    state: restarted
+
+- name: Reload docker
+  service:
+    name: docker
+    state: restarted
