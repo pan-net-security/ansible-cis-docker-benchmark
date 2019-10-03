@@ -2,6 +2,7 @@
 - name: Prepare
   hosts: all
   gather_facts: false
+  become: true
   tasks:
     - name: install packages for testing under docker
       apt:

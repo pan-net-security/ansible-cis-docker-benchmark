@@ -38,8 +38,10 @@ Development
 ```
 virtualenv -p python3 venv
 . venv/bin/activate
-pip install molecule[docker]
-molecule test
+pip install molecule[docker] molecule[vagrant] docker python-vagrant
+molecule test 
+# or
+molecule test -s docker-ubuntu
 ````
 
 License
