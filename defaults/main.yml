@@ -54,3 +54,12 @@ cdb_authorization_plugins: []
 
 # --- internal vars
 _cdb_unscored_print: "Unscored items are not covered by this role"
+
+_cdb_out_of_scope_container_registry: >-
+      "This item is out of scope - relates to a container registry"
+
+_cdb_out_of_scope_container_runtime: >-
+      "This item is out of scope - relates to container at runtime"
+
+_cdb_out_of_scope_container_image: >-
+      "This item is out of scope - relates to a container image"
