@@ -1,1 +1,293 @@
 ---
+
+- name: "Check if Docker config file exists"
+  block:
+    - name: "Check if Docker config file exists"
+      stat:
+        path: "{{ cdb_config_file }}"
+      register: cfg_file
+
+    - name: "Create Docker config file if it doesn't exist"
+      copy:
+        dest: "{{ cdb_config_file }}"
+        content: {}
+        owner: root
+        group: root
+        mode: '0640'
+      when: cdb_config_file_create and not cfg_file.stat.exists
+
+    - name: "Check if Docker config file exists"
+      stat:
+        path: "{{ cdb_config_file }}"
+      register: cfg_file
+
+    - name: "Check if file exists"
+      fail:
+        msg: "Config file {{ cdb_config_file }} does not exist!"
+      when: not cfg_file.stat.exists
+
+  tags:
+   - scored
+   - not_scored
+   - section2.1
+   - section2.2
+   - section2.3
+   - section2.4
+   - section2.5
+   - section2.6
+   - section2.7
+   - section2.8
+   - section2.9
+   - section2.10
+   - section2.11
+   - section2.12
+   - section2.13
+   - section2.14
+   - section2.15
+   - section2.16
+   - section2.17
+
+- name: "2.1 Ensure network traffic is restricted between containers on the default bridge (scored)"
+  jsonpatch:
+    file: "{{ cdb_config_file }}"
+    key: icc
+    value: false
+  notify: Reload docker
+  tags:
+   - scored
+   - section2.1
+
+- name: "2.2 Ensure the logging level is set to 'info' (scored)"
+  jsonpatch:
+    file: "{{ cdb_config_file }}"
+    key: log-level
+    value: info
+  notify: Reload docker
+  tags:
+   - scored
+   - section2.2
+
+- name: "2.3 Ensure Docker is allowed to make changes to iptables (scored)"
+  jsonpatch:
+    file: "{{ cdb_config_file }}"
+    key: iptables
+    value: true
+  notify: Reload docker
+  tags:
+   - scored
+   - section2.3
+
+- name: "2.4 Ensure insecure registries are not used (scored)"
+  jsonpatch:
+    file: "{{ cdb_config_file }}"
+    key: insecure-registries
+    state: absent
+  notify: Reload docker
+  tags:
+   - scored
+   - section2.4
+
+- name: "2.5 Ensure aufs storage driver is not used (scored)"
+  debug:
+    msg: "'aufs' not used as storage driver for your Docker instance."
+  notify: Reload docker
+  tags:
+   - scored
+   - section2.5
+
+- block:
+    - name: "Change permissions on files related to private part of TLS certs for TLS authentication"
+      file:
+        path: "{{ item }}"
+        mode: 0400
+      with_items:
+        - "{{ server_cert_path }}/{{ ca_key }}"
+        - "{{ server_cert_path }}/{{ server_cert_key }}"
+        - "{{ client_cert_path }}/{{ client_cert_key }}"
+
+    - name: "Change permissions on files related to public part of TLS certs for TLS authentication"
+      file:
+        path: "{{ item }}"
+        mode: 0444
+      with_items:
+        - "{{ server_cert_path }}/{{ ca_cert }}"
+        - "{{ server_cert_path }}/{{ server_cert_cert }}"
+        - "{{ client_cert_path }}/{{ client_cert_cert }}"
+
+    - name: "2.6 Ensure TLS authentication for Docker daemon is configured (scored)"
+      jsonpatch:
+        file: "{{ cdb_config_file }}"
+        key: tlsverify
+        value: true
+      notify: Reload docker
+
+    - name: "2.6 Ensure TLS authentication for Docker daemon is configured (scored)"
+      jsonpatch:
+        file: "{{ cdb_config_file }}"
+        key: tlscacert
+        value: "{{ cdb_server_cert_path }}/{{ cdb_ca_cert }}"
+      notify: Reload docker
+
+    - name: "2.6 Ensure TLS authentication for Docker daemon is configured (scored)"
+      jsonpatch:
+        file: "{{ cdb_config_file }}"
+        key: tlscert
+        value: "{{ cdb_server_cert_path }}/{{ cdb_server_cert }}"
+      notify: Reload docker
+
+    - name: "2.6 Ensure TLS authentication for Docker daemon is configured (scored)"
+      jsonpatch:
+        file: "{{ cdb_config_file }}"
+        key: tlskey
+        value: "{{ cdb_server_cert_path }}/{{ cdb_server_cert_key }}"
+      notify: Reload docker
+  when: cdb_dockerd_via_network
+  tags:
+   - scored
+   - section2.6
+
+- name: "2.7 Ensure the default ulimit is configured appropriately (Not scored)"
+  jsonpatch:
+    file: "{{ cdb_config_file }}"
+    key: default-ulimits
+    value: {
+              'nofile': {
+                  'soft': "{{ cdb_default_ulimits_nofile_soft }}",
+                  'hard': "{{ cdb_default_ulimits_nofile_hard }}",
+                  'name': 'nofile'
+              },
+              'nproc': {
+                  'soft': "{{ cdb_default_ulimits_nproc_soft }}",
+                  'hard': "{{ cdb_default_ulimits_nproc_hard }}",
+                  'name': 'nproc'
+              }
+           }
+  notify: Reload docker
+  tags:
+   - not_scored
+   - section2.7
+
+# TODO: This is needed only for environments where we can not be sure applications
+#       inside containers are running as non-priviledged users
+#       For the time being we are assuming that conytainers are not running apps as root users.
+#
+#
+# - name: "2.8 Enable user namespace support (scored)"
+#   lineinfile:
+#     path: "{{ item }}"
+#     line: dockremap:231072:65536
+#   with_items:
+#     - /etc/subgid
+#     - /etc/subuid
+#   tags:
+#    - scored
+#    - section2.8
+
+# - name: "2.8 Enable user namespace support (scored)"
+#   jsonpatch:
+#     file: "{{ cdb_config_file }}"
+#     key: userns-remap
+#     value: default
+#   notify: Reload docker
+#   tags:
+#    - scored
+#    - section2.8
+
+- name: "2.9 Ensure the default cgroup usage has been confirmed (scored)"
+  jsonpatch:
+    file: "{{ cdb_config_file }}"
+    key: cgroup-parent
+    value: /docker
+  notify: Reload docker
+  tags:
+   - scored
+   - section2.9
+
+- name: "2.10 Ensure base device size is not changed until needed (scored)"
+  debug:
+    msg: "base device size left at default as per guidance."
+  notify: Reload docker
+  tags:
+   - scored
+   - section2.10
+
+- name: "2.11 Ensure that authorization for Docker client commands is enabled (scored) (Not Implemented)"
+  jsonpatch:
+    file: "{{ cdb_config_file }}"
+    key: authorization-plugins
+    value: "{{ cdb_authorization_plugins }}"
+  when: cdb_authorization_plugins is defined and (cdb_authorization_plugins|length>0)
+  notify: Reload docker
+  tags:
+   - scored
+   - section2.11
+
+- name: "2.11 Ensure that authorization for Docker client commands is enabled (scored) (Not Implemented)"
+  debug:
+    msg: "Default TLS authorization set by 2.6"
+  when: authorization_plugins is not defined or (authorization_plugins|length==0)
+  tags:
+   - scored
+   - section2.11
+
+- name: "2.12 Ensure centralized and remote logging is configured (scored)"
+  jsonpatch:
+    file: "{{ cdb_config_file }}"
+    key: log-opts
+    value: { 'syslog-address': '{{ cdb_syslog_address }}' }
+  when: cdb_syslog_address is defined and cdb_syslog_address
+  notify: Reload docker
+  tags:
+   - scored
+   - section2.12
+
+- name: "2.13 Ensure live restore is Enabled (scored)"
+  jsonpatch:
+    file: "{{ cdb_config_file }}"
+    key: live-restore
+    value: true
+  notify: Reload docker
+  tags:
+   - scored
+   - section2.13
+
+- name: "2.14 Ensure Userland Proxy is Disabled (scored)"
+  jsonpatch:
+    file: "{{ cdb_config_file }}"
+    key: userland-proxy
+    value: false
+  notify: Reload docker
+  tags:
+   - scored
+   - section2.14
+
+- name: "2.15 Ensure daemon-wide custom seccomp profile is applied, if needed (Not scored)"
+  jsonpatch:
+    file: "{{ cdb_config_file }}"
+    key: seccomp-profile
+    value: "{{ cdb_seccomp_profile }}"
+  when: cdb_seccomp_profile is defined and cdb_seccomp_profile
+  notify: Reload docker
+  tags:
+   - scored
+   - section2.15
+
+- name: "2.16 Ensure experimental features are avoided in production (scored)"
+  jsonpatch:
+    file: "{{ cdb_config_file }}"
+    key: experimental
+    value: false
+  notify: Reload docker
+  tags:
+   - scored
+   - section2.16
+
+- name: "2.17 Ensure containers are restricted from acquiring new privileges (scored)"
+  jsonpatch:
+    file: "{{ cdb_config_file }}"
+    key: no-new-privileges
+    value: true
+  notify: Reload docker
+  tags:
+   - scored
+   - section2.17
