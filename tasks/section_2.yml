@@ -86,10 +86,21 @@
    - scored
    - section2.4
 
-- name: "2.5 Ensure aufs storage driver is not used (scored)"
-  debug:
-    msg: "'aufs' not used as storage driver for your Docker instance."
-  notify: Reload docker
+- block:
+  - name: "Fetch the Docker config file from the remote"
+    slurp:
+      src: "{{ cdb_config_file }}"
+    register: b64_cfg_file
+
+  - name: "Find value for storage-driver in Docker config file."
+    set_fact:
+      storage_driver: "{{ b64_cfg_file['content'] | b64decode | from_json | json_query('\"storage-driver\"') }}"
+
+  - name: "2.5 Ensure aufs storage driver is not used (scored)"
+    fail:
+      msg: "'aufs' used as storage driver in your Docker configuration."
+    when: storage_driver == "aufs"
+
   tags:
    - scored
    - section2.5
@@ -192,12 +203,23 @@
 #    - scored
 #    - section2.8
 
-- name: "2.9 Ensure the default cgroup usage has been confirmed (scored)"
-  jsonpatch:
-    file: "{{ cdb_config_file }}"
-    key: cgroup-parent
-    value: /docker
-  notify: Reload docker
+- block:
+  - name: "Fetch the Docker config file from the remote"
+    slurp:
+      src: "{{ cdb_config_file }}"
+    register: b64_cfg_file
+
+  - name: "Find value for storage-driver in Docker config file."
+    set_fact:
+      cgroup_parent: "{{ b64_cfg_file['content'] | b64decode | from_json | json_query('\"cgroup-parent\"') }}"
+
+  - name: "2.9 Ensure the default cgroup usage has been confirmed (scored)"
+    jsonpatch:
+      file: "{{ cdb_config_file }}"
+      key: cgroup-parent
+      value: /docker
+    notify: Reload docker
+    when: cgroup_parent|bool
   tags:
    - scored
    - section2.9
