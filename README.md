@@ -12,7 +12,35 @@ Requirements
 Role Variables
 --------------
 
-:TODO
+`cdb_config_file (default: /etc/docker/daemon.json)`
+This variable is path to the Docker daemon configuration file. During execution this role assumes the config file defined here should be changed according to the defined security practices.
+
+`cdb_config_file_create (default: false)`
+This variable will trigger config file creation if it already doesn't exist.
+
+`cdb_dockerd_via_network (default: false)`
+This variable will trigger configuration changes related to exposing Docker via TCP over network.
+
+cdb_default_ulimits_nofile_soft (default: 100)
+This variable sets soft limit for number of opened files
+
+cdb_default_ulimits_nofile_hard (default: 200)
+This variable sets hard limit for number of opened files
+
+cdb_default_ulimits_nproc_soft (default: 1024)
+This variable sets soft limit for maximum number of processes for all containers
+
+cdb_default_ulimits_nproc_hard (default: 2048)
+This variable sets hard limit for maximum number of processes for all containers
+
+cdb_syslog_address (default: '')
+This variable defines remote syslog for storing log files.
+Default value should be changed to point to remote syslog server.
+
+cdb_seccomp_profile (default: '')
+
+cdb_authorization_plugins (default [])
+
 
 Dependencies
 ------------
