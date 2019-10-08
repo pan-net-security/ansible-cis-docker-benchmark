@@ -18,7 +18,7 @@ cdb_trusted_users:
   - root
 
 cdb_config_file: /etc/docker/daemon.json
-cdb_config_file_create: true
+cdb_config_file_create: false
 
 cdb_dockerd_via_network: false
 

@@ -33,13 +33,13 @@
         state: present
         update_cache: yes
 
-#    - name: "Add /etc/docker/daemon.json"
-#      copy:
-#        dest: /etc/docker/daemon.json
-#        content: {}
-#        owner: root
-#        group: root
-#        mode: '0640'
+    - name: "Add /etc/docker/daemon.json"
+      copy:
+        dest: /etc/docker/daemon.json
+        content: {}
+        owner: root
+        group: root
+        mode: '0640'
 
 
     - name: "Restart docker"

@@ -14,17 +14,16 @@
         owner: root
         group: root
         mode: '0640'
-      when: cdb_config_file_create and not cfg_file.stat.exists
-
-    - name: "Check if Docker config file exists"
-      stat:
-        path: "{{ cdb_config_file }}"
-      register: cfg_file
+      when:
+        - cdb_config_file_create
+        - not cfg_file.stat.exists
 
     - name: "Check if file exists"
       fail:
         msg: "Config file {{ cdb_config_file }} does not exist!"
-      when: not cfg_file.stat.exists
+      when:
+        - not cdb_config_file_create
+        - not cfg_file.stat.exists
 
   tags:
    - scored
