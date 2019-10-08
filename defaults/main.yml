@@ -7,12 +7,6 @@ cdb_section_2: true
 
 cdb_section_3: true
 
-cdb_section_4: true
-
-cdb_section_5: true
-
-# section_6: false
-
 cdb_trusted_users:
   - ubuntu
   - root
@@ -23,7 +17,6 @@ cdb_config_file_create: false
 cdb_dockerd_via_network: false
 
 # Provide the following arguments if dockerd_via_network is true
-# Generate CA cert and CA Key and place it in the files directory
 
 cdb_dockerd_ip: 0.0.0.0
 cdb_dockerd_port: 2376
@@ -41,6 +34,8 @@ cdb_server_cert_key: server-key.pem
 cdb_client_cert_path: /etc/docker/tls/client_certs
 cdb_client_cert: cert.pem
 cdb_client_cert_key: key.pem
+
+#### end of docker_via_network variables #########
 
 
 cdb_default_ulimits_nofile_soft: 100
