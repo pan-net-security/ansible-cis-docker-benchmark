@@ -44,9 +44,9 @@ cdb_default_ulimits_nproc_soft: 1024
 cdb_default_ulimits_nproc_hard: 2048
 
 cdb_syslog_address: ''
+skip_check_remote_logging: false
 cdb_seccomp_profile: ''
 cdb_authorization_plugins: []
-
 
 # --- internal vars
 _cdb_unscored_print: "Unscored items are not covered by this role"

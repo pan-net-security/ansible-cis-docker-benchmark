@@ -35,7 +35,10 @@ This variable sets hard limit for maximum number of processes for all containers
 
 `cdb_syslog_address (default: '')`
 This variable defines remote syslog for storing log files.
-Default value should be changed to point to remote syslog server.
+Default value should be changed to point to a remote syslog server.
+
+`skip_check_remote_logging (default: false)`
+Skip remote logging check. CIS benchmark explicitly states that logs should be stored on the remote machine.
 
 `cdb_seccomp_profile (default: '')`
 This variable hold path to the seccomp profile.
@@ -43,8 +46,6 @@ If left empty, Docker daemon will use default seccomp profile.
 
 `cdb_authorization_plugins (default [])`
 The list of authorization plugins.
-This variable must be set in order to comply with CIS Benchmark.
-https://docs.docker.com/engine/extend/plugins_authorization/
 
 
 Dependencies

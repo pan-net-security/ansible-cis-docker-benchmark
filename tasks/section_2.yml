@@ -87,12 +87,12 @@
    - section2.4
 
 - block:
-  - name: "Fetch the Docker config file from the remote"
+  - name: "Fetch the Docker config file from the remote (2.5 pre-task)"
     slurp:
       src: "{{ cdb_config_file }}"
     register: b64_cfg_file
 
-  - name: "Find value for storage-driver in Docker config file."
+  - name: "Find value for storage-driver in Docker config file (2.5 pre-task)"
     set_fact:
       storage_driver: "{{ b64_cfg_file['content'] | b64decode | from_json | json_query('\"storage-driver\"') }}"
 
@@ -106,7 +106,7 @@
    - section2.5
 
 - block:
-    - name: "Change permissions on files related to private part of TLS certs for TLS authentication"
+    - name: "Change permissions on files related to private part of TLS certs for TLS authentication (2.6 pre-task)"
       file:
         path: "{{ item }}"
         mode: 0400
@@ -115,7 +115,7 @@
         - "{{ server_cert_path }}/{{ server_cert_key }}"
         - "{{ client_cert_path }}/{{ client_cert_key }}"
 
-    - name: "Change permissions on files related to public part of TLS certs for TLS authentication"
+    - name: "Change permissions on files related to public part of TLS certs for TLS authentication (2.6 pre-task)"
       file:
         path: "{{ item }}"
         mode: 0444
@@ -204,12 +204,12 @@
 #    - section2.8
 
 - block:
-  - name: "Fetch the Docker config file from the remote"
+  - name: "Fetch the Docker config file from the remote (2.9 pre-task)"
     slurp:
       src: "{{ cdb_config_file }}"
     register: b64_cfg_file
 
-  - name: "Find value for storage-driver in Docker config file."
+  - name: "Find value for storage-driver in Docker config file (2.9 pre-task)"
     set_fact:
       cgroup_parent: "{{ b64_cfg_file['content'] | b64decode | from_json | json_query('\"cgroup-parent\"') }}"
 
@@ -251,13 +251,25 @@
    - scored
    - section2.11
 
-- name: "2.12 Ensure centralized and remote logging is configured (scored)"
-  jsonpatch:
-    file: "{{ cdb_config_file }}"
-    key: log-opts
-    value: { 'syslog-address': '{{ cdb_syslog_address }}' }
-  when: cdb_syslog_address is defined and cdb_syslog_address
+- block:
+  - name: "Check if syslog address is empty (2.12 pre-task)"
+    fail:
+      msg: "cdb_syslog_address variable can not be empty"
+    when:
+      - cdb_syslog_address is defined
+      - not cdb_syslog_address
+
+  - name: "2.12 Ensure centralized and remote logging is configured (scored)"
+    jsonpatch:
+      file: "{{ cdb_config_file }}"
+      key: log-opts
+      value: { 'syslog-address': '{{ cdb_syslog_address }}' }
+    when:
+      - cdb_syslog_address is defined
+      - cdb_syslog_address
+
   notify: Reload docker
+  when: not skip_check_remote_logging
   tags:
    - scored
    - section2.12
