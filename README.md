@@ -21,25 +21,30 @@ This variable will trigger config file creation if it already doesn't exist.
 `cdb_dockerd_via_network (default: false)`
 This variable will trigger configuration changes related to exposing Docker via TCP over network.
 
-cdb_default_ulimits_nofile_soft (default: 100)
-This variable sets soft limit for number of opened files
+`cdb_default_ulimits_nofile_soft (default: 100)`
+This variable sets soft limit for number of opened files.
 
-cdb_default_ulimits_nofile_hard (default: 200)
-This variable sets hard limit for number of opened files
+`cdb_default_ulimits_nofile_hard (default: 200)`
+This variable sets hard limit for number of opened files.
 
-cdb_default_ulimits_nproc_soft (default: 1024)
-This variable sets soft limit for maximum number of processes for all containers
+`cdb_default_ulimits_nproc_soft (default: 1024)`
+This variable sets soft limit for maximum number of processes for all containers.
 
-cdb_default_ulimits_nproc_hard (default: 2048)
-This variable sets hard limit for maximum number of processes for all containers
+`cdb_default_ulimits_nproc_hard (default: 2048)`
+This variable sets hard limit for maximum number of processes for all containers.
 
-cdb_syslog_address (default: '')
+`cdb_syslog_address (default: '')`
 This variable defines remote syslog for storing log files.
 Default value should be changed to point to remote syslog server.
 
-cdb_seccomp_profile (default: '')
+`cdb_seccomp_profile (default: '')`
+This variable hold path to the seccomp profile.
+If left empty, Docker daemon will use default seccomp profile.
 
-cdb_authorization_plugins (default [])
+`cdb_authorization_plugins (default [])`
+The list of authorization plugins.
+This variable must be set in order to comply with CIS Benchmark.
+https://docs.docker.com/engine/extend/plugins_authorization/
 
 
 Dependencies
