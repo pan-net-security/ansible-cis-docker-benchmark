@@ -1,5 +1,4 @@
 ---
-
 - name: "Check if Docker config file exists"
   block:
     - name: "Check if Docker config file exists"
@@ -267,8 +266,8 @@
     when:
       - cdb_syslog_address is defined
       - cdb_syslog_address
+    notify: Reload docker
 
-  notify: Reload docker
   when: not skip_check_remote_logging
   tags:
    - scored
