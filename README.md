@@ -8,6 +8,10 @@ Requirements
 
 - Docker engine
 - Ansible >= 2.8
+- jmespath == 0.9.4
+
+Ansible and jmespath can be installed via Python's `pip` utility. In the role repo you can find `requirements.txt`.
+To install them, all you need to do is `pip install -r requirements.txt`.
 
 Role Variables
 --------------
