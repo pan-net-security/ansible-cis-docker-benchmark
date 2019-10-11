@@ -37,7 +37,7 @@ This variable sets soft limit for maximum number of processes for all containers
 `cdb_default_ulimits_nproc_hard (default: 2048)`
 This variable sets hard limit for maximum number of processes for all containers.
 
-`cdb_syslog_address (default: '')`
+`cdb_syslog_address (default: 'tcp://127.0.0.1:514')`
 This variable defines remote syslog for storing log files.
 Default value should be changed to point to a remote syslog server.
 

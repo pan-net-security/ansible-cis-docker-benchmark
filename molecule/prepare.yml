@@ -46,3 +46,20 @@
       service:
         name: docker
         state: restarted
+
+    - name: "Ensure rsyslog is listening on port 514 (needed for tests)"
+      lineinfile:
+        path: /etc/rsyslog.conf
+        line: module(load="imtcp")
+        state: present
+
+    - name: "Ensure rsyslog is listening on port 514 (needed for tests)"
+      lineinfile:
+        path: /etc/rsyslog.conf
+        line: input(type="imtcp" port="514" Address="127.0.0.1")
+        state: present
+
+    - name: "Restart rsyslogd"
+      service:
+        name: rsyslog
+        state: restarted

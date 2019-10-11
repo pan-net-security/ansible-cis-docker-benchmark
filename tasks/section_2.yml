@@ -14,14 +14,14 @@
         group: root
         mode: '0640'
       when:
-        - cdb_config_file_create
+        - cdb_config_file_create|bool
         - not cfg_file.stat.exists
 
     - name: "Check if file exists"
       fail:
         msg: "Config file {{ cdb_config_file }} does not exist!"
       when:
-        - not cdb_config_file_create
+        - not cdb_config_file_create|bool
         - not cfg_file.stat.exists
 
   tags:
@@ -218,7 +218,7 @@
       key: cgroup-parent
       value: /docker
     notify: Reload docker
-    when: cgroup_parent|bool
+    when: cgroup_parent
   tags:
    - scored
    - section2.9
@@ -236,7 +236,9 @@
     file: "{{ cdb_config_file }}"
     key: authorization-plugins
     value: "{{ cdb_authorization_plugins }}"
-  when: cdb_authorization_plugins is defined and (cdb_authorization_plugins|length>0)
+  when:
+    - cdb_authorization_plugins is defined
+    - cdb_authorization_plugins|length>0
   notify: Reload docker
   tags:
    - scored
@@ -253,10 +255,20 @@
 - block:
   - name: "Check if syslog address is empty (2.12 pre-task)"
     fail:
-      msg: "cdb_syslog_address variable can not be empty"
+      msg: "cdb_syslog_address variable can not be empty {{ cdb_syslog_address }}"
     when:
       - cdb_syslog_address is defined
-      - not cdb_syslog_address
+      - cdb_syslog_address|length == 0
+
+  - name: "2.12 Ensure centralized and remote logging is configured (scored)"
+    jsonpatch:
+      file: "{{ cdb_config_file }}"
+      key: log-driver
+      value: "syslog"
+    when:
+      - cdb_syslog_address is defined
+      - cdb_syslog_address|length > 0
+    notify: Reload docker
 
   - name: "2.12 Ensure centralized and remote logging is configured (scored)"
     jsonpatch:
@@ -265,7 +277,7 @@
       value: { 'syslog-address': '{{ cdb_syslog_address }}' }
     when:
       - cdb_syslog_address is defined
-      - cdb_syslog_address
+      - cdb_syslog_address|length > 0
     notify: Reload docker
 
   when: not skip_check_remote_logging
@@ -298,7 +310,9 @@
     file: "{{ cdb_config_file }}"
     key: seccomp-profile
     value: "{{ cdb_seccomp_profile }}"
-  when: cdb_seccomp_profile is defined and cdb_seccomp_profile
+  when:
+    - cdb_seccomp_profile is defined
+    - cdb_seccomp_profile|length > 0
   notify: Reload docker
   tags:
    - scored
