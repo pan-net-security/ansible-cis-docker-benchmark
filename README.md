@@ -88,7 +88,7 @@ TODO
 The following requirements are not checked, because:
 
 * Docker Registry is not being checked: 3.7, 3.8
-
+* Section 2.8 is not checked as it is assumed that applications inside containers are running as non-priviledged users.
 
 License
 -------
