@@ -44,7 +44,7 @@ cdb_default_ulimits_nproc_soft: 1024
 cdb_default_ulimits_nproc_hard: 2048
 
 cdb_syslog_address: "tcp://127.0.0.1:514"
-skip_check_remote_logging: false
+cdb_skip_check_remote_logging: false
 cdb_seccomp_profile: ''
 cdb_authorization_plugins: []
 

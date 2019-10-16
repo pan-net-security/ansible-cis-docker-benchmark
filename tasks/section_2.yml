@@ -280,7 +280,7 @@
       - cdb_syslog_address|length > 0
     notify: Reload docker
 
-  when: not skip_check_remote_logging
+  when: not cdb_skip_check_remote_logging
   tags:
    - scored
    - section2.12
