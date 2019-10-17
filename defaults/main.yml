@@ -43,6 +43,8 @@ cdb_default_ulimits_nofile_hard: 200
 cdb_default_ulimits_nproc_soft: 1024
 cdb_default_ulimits_nproc_hard: 2048
 
+cdb_remap_user: "default"
+cdb_skip_user_remapping: false
 cdb_syslog_address: "tcp://127.0.0.1:514"
 cdb_skip_check_remote_logging: false
 cdb_seccomp_profile: ''

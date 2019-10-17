@@ -37,6 +37,17 @@ This variable sets soft limit for maximum number of processes for all containers
 `cdb_default_ulimits_nproc_hard (default: 2048)`
 This variable sets hard limit for maximum number of processes for all containers.
 
+`cdb_remap_user (default: "default")`
+system user used for usernamespace remapping.
+The value `default` means that Docker daemon will create a default remap user called `dockremap`
+The user will be created with correct values in `/etc/subuid` and `/etc/subgid`
+Change this value, only if you are confident that you have configured your custom user properly.
+For details see: https://docs.docker.com/engine/security/userns-remap/#disable-namespace-remapping-for-a-container
+
+`cdb_skip_user_remapping (default: false)`
+This variable is used to skip section2.8. It is not recommended to skip this unless you have manually configured remap user.
+For instruction see: https://docs.docker.com/engine/security/userns-remap/#disable-namespace-remapping-for-a-container
+
 `cdb_syslog_address (default: 'tcp://127.0.0.1:514')`
 This variable defines remote syslog for storing log files.
 Default value should be changed to point to a remote syslog server.

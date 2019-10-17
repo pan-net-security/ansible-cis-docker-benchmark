@@ -192,15 +192,26 @@
 #    - scored
 #    - section2.8
 
-# - name: "2.8 Enable user namespace support (scored)"
-#   jsonpatch:
-#     file: "{{ cdb_config_file }}"
-#     key: userns-remap
-#     value: default
-#   notify: Reload docker
-#   tags:
-#    - scored
-#    - section2.8
+- block:
+  - name: "FAIL but silently for distribution other than an Ubuntu (pre-task 2.8)"
+    fail:
+      msg: "Enabling user namespace support using this tole was only tested on Ubuntu"
+    when: ansible_distribution != "Ubuntu"
+    ignore_errors: yes
+
+  - name: "2.8 Enable user namespace support (scored)"
+    jsonpatch:
+      file: "{{ cdb_config_file }}"
+      key: userns-remap
+      value: "{{ cdb_remap_user }}"
+    notify: Reload docker
+    when: ansible_distribution == "Ubuntu"
+    ignore_errors: yes
+
+  when: not cdb_skip_user_remapping
+  tags:
+   - scored
+   - section2.8
 
 - block:
   - name: "Fetch the Docker config file from the remote (2.9 pre-task)"
